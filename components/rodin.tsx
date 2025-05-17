@@ -25,7 +25,7 @@ export default function Rodin() {
   const [options, setOptions] = useState({
     condition_mode: "concat" as const,
     quality: "medium" as const,
-    geometry_file_format: "stl" as const,
+    geometry_file_format: "glb" as const,
     use_hyper: false,
     tier: "Regular" as const,
     TAPose: false,
@@ -81,18 +81,18 @@ export default function Rodin() {
             throw new Error(`Download error: ${downloadData.error}`)
           }
 
-          // Find the first STL file to display in the 3D viewer
+          // Find the first GLB file to display in the 3D viewer
           if (downloadData.list && downloadData.list.length > 0) {
-            const stlFile = downloadData.list.find((file: { name: string }) => file.name.toLowerCase().endsWith(".stl"))
+            const glbFile = downloadData.list.find((file: { name: string }) => file.name.toLowerCase().endsWith(".glb"))
 
-            if (stlFile) {
-              const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(stlFile.url)}`
+            if (glbFile) {
+              const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(glbFile.url)}`
               setModelUrl(proxyUrl)
-              setDownloadUrl(stlFile.url)
+              setDownloadUrl(glbFile.url)
               setIsLoading(false)
               setShowPromptContainer(false)
             } else {
-              setError("No STL file found in the results")
+              setError("No GLB file found in the results")
               setIsLoading(false)
             }
           } else {
@@ -180,7 +180,28 @@ export default function Rodin() {
     setShowPromptContainer(true)
   }
 
-
+  const ExternalLinks = () => (
+    <div className="flex items-center space-x-6">
+      <a
+        href="https://hyper3d.ai"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center text-white hover:text-gray-300 transition-colors tracking-normal"
+      >
+        <span className="mr-1">Website</span>
+        <ExternalLink className="h-4 w-4" />
+      </a>
+      <a
+        href="https://developer.hyper3d.ai"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center text-white hover:text-gray-300 transition-colors tracking-normal"
+      >
+        <span className="mr-1">API Docs</span>
+        <ExternalLink className="h-4 w-4" />
+      </a>
+    </div>
+  )
 
   return (
     <div className="relative h-[100dvh] w-full">
@@ -193,8 +214,16 @@ export default function Rodin() {
       <div className="absolute inset-0 z-10 pointer-events-none">
         {/* Logo in top left */}
         <div className="absolute top-6 left-6 pointer-events-auto">
-          <h1 className="text-3xl text-white font-normal tracking-normal">CADet</h1>
+          <h1 className="text-3xl text-white font-normal tracking-normal">3D Model Generator</h1>
+          <p className="text-gray-400 text-sm mt-1 tracking-normal">Powered by Hyper3D Rodin</p>
         </div>
+
+        {/* Links in top right - desktop only */}
+        {!isMobile && (
+          <div className="absolute top-6 right-6 pointer-events-auto">
+            <ExternalLinks />
+          </div>
+        )}
 
         {/* Loading indicator */}
         <StatusIndicator isLoading={isLoading} jobStatuses={jobStatuses} />
@@ -230,7 +259,14 @@ export default function Rodin() {
         {/* Input field at bottom */}
         {showPromptContainer && (
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-3xl px-4 sm:px-0 pointer-events-auto">
-            <Form isLoading={isLoading} onSubmit={handleSubmit} onOpenOptions={() => setShowOptions(true)} />            
+            <Form isLoading={isLoading} onSubmit={handleSubmit} onOpenOptions={() => setShowOptions(true)} />
+
+            {/* Links below prompt on mobile */}
+            {isMobile && (
+              <div className="mt-4 flex justify-center pointer-events-auto">
+                <ExternalLinks />
+              </div>
+            )}
           </div>
         )}
       </div>

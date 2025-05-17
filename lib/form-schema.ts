@@ -6,7 +6,7 @@ export const formSchema = z
     prompt: z.string().optional(),
     condition_mode: z.enum(["concat", "fuse"]).default("concat"),
     quality: z.enum(["high", "medium", "low", "extra-low"]).default("medium"),
-    geometry_file_format: z.enum(["glb", "usdz", "fbx", "obj", "stl"]).default("glb"),
+    geometry_file_format: z.enum(["glb", "usdz", "fbx", "obj", "stl"]).default("stl"),
     use_hyper: z.boolean().default(false),
     tier: z.enum(["Regular", "Sketch"]).default("Regular"),
     TAPose: z.boolean().default(false),

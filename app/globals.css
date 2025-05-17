@@ -52,3 +52,8 @@ body {
   font-family: "Geist Mono", monospace;
   background-color: black;
 }
+
+/* Hide Next.js toast */
+[data-nextjs-toast] {
+  display: none !important;
+}
